@@ -75,7 +75,7 @@
 
     <div class="content">
         <div class="title m-b-md">
-            Laravel Boilerplate Aapp
+            Laravel Boilerplate App
         </div>
 
         <div class="links">
