@@ -1,0 +1,23 @@
+'use strict';
+
+const path = require('path');
+
+module.exports = {
+    module: {
+        loaders: [
+            {
+                test: /\.html$/,
+                loader: 'html'
+            },
+            {
+                test: /\.vue$/,
+                loader: 'vue'
+            }
+        ]
+    },
+    resolve: {
+        alias: {
+            vue: 'vue/dist/vue.js'
+        }
+    }
+}

@@ -1,6 +1,23 @@
 const elixir = require('laravel-elixir');
 
-require('laravel-elixir-vue');
+
+// elixir.ready(function () {
+//     elixir.webpack.mergeConfig({
+//         resolve: {
+//             extensions:[".jsx"]
+//         },
+//         module: {
+//             loaders: [
+//                 { test: /\.jsx?$/, loader: 'babel' }
+//                 ]
+//
+//         }
+//     })
+// });
+
+
+require('laravel-elixir-vue-2');
+require('laravel-elixir-vueify');
 
 /*
  |--------------------------------------------------------------------------
@@ -15,5 +32,8 @@ require('laravel-elixir-vue');
 
 elixir(mix => {
     mix.sass('app.scss')
-       .webpack('app.js');
+    //mix.less('app.less')
+    //.browserify('app.js')
+        .webpack('app.js')
+        .copy('node_modules/bootstrap-sass/assets/fonts/bootstrap/', 'public/fonts/bootstrap');
 });

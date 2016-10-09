@@ -2,7 +2,7 @@
 namespace App\Api\V1\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\User;
+use App\Models\Access\User\User;
 use Config;
 use Dingo\Api\Exception\ValidationHttpException;
 use Illuminate\Http\Request;
@@ -49,7 +49,6 @@ class AuthController extends Controller
         }
         try {
             if (!$token = JWTAuth::attempt($credentials)) {
-
                 return $this->response->errorUnauthorized();
             }
         } catch (JWTException $e) {

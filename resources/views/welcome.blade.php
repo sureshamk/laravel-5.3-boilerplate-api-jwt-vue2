@@ -84,7 +84,7 @@
             <br>
             <br>
             <br>
-            <a href="{{url('/').'/site'}}">Frontend</a>
+            <a href="{{url('/').'/home'}}">Frontend</a>
             <a href="{{url('/').'/admin'}}">Backend</a>
         </div>
     </div>
