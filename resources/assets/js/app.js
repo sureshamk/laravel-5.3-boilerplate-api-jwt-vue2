@@ -14,8 +14,11 @@ import App from "./components/App.vue";
 import Container from "./components/Container.vue";
 import About from "./components/About.vue";
 import Dashboard from "./components/Dashboard.vue";
-import Login from "./components/Login.vue";
+import Login from "./components/Auth/Login.vue";
+import Register from "./components/Auth/Register.vue";
+import ForgotPassword from "./components/Auth/ForgotPassword.vue";
 import Users from "./components/Users.vue";
+
 
 
 var VueResource = require('vue-resource');
@@ -93,6 +96,14 @@ const router = new VueRouter({
         {
             path: '/login',
             component: Login
+        },
+        {
+            path: '/forgot-password',
+            component: ForgotPassword
+        },
+        {
+            path: '/register',
+            component: Register
         },
         {
             path: '/logout',

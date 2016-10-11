@@ -52,11 +52,11 @@ class EloquentUserRepository implements UserContract
      * @param $input
      * @param $roles
      * @param $permissions
-     * @return bool
+     * @return User
      * @throws GeneralException
      * @throws UserNeedsRolesException
      */
-    public function create($input, $roles, $permissions)
+    public function create($input, $roles=[], $permissions=[])
     {
         $user = $this->createUserStub($input);
 
@@ -66,7 +66,7 @@ class EloquentUserRepository implements UserContract
             if (isset($input['confirmation_email']) && $user->confirmed == 0) {
                 $this->auth->resendConfirmationEmail($user->id);
             }
-            return true;
+            return $user;
         }
 
         throw new GeneralException('There was a problem creating this user. Please try again.');
@@ -81,7 +81,7 @@ class EloquentUserRepository implements UserContract
         $user = new User;
         $user->name = $input['name'];
         $user->email = $input['email'];
-        $user->password = $input['password'];
+        $user->password = bcrypt($input['password']);
         $user->status = isset($input['status']) ? 1 : 0;
         $user->confirmation_code = md5(uniqid(mt_rand(), true));
         $user->confirmed = isset($input['confirmed']) ? 1 : 0;

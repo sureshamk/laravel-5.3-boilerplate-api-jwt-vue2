@@ -19,7 +19,26 @@ export default {
             }
         })
     },
-
+    register(data, cb){
+        Vue.http.post('/api/auth/signup', {
+            name: data.name,
+            email: data.email,
+            password: data.password,
+            password_confirmation: data.passwordConfirm
+        }).then((response) => {
+            if (response.data.token) {
+                cb({
+                    registration: true,
+                    token: response.data.token
+                })
+            } else {
+                console.error('token not retrived')
+            }
+        }, (response) => {
+            console.error('token not retrived')
+            cb({registration: false})
+        });
+    },
     getToken() {
         return localStorage.token
     },

@@ -38,7 +38,7 @@
                 options: {
                     templates: {
                         erase: function (h, row) {
-                            return <delete id={row.id}></delete>
+                            return ''
                         }
                     }
                 }

@@ -3,6 +3,9 @@ namespace App\Api\V1\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Access\User\User;
+use App\Repositories\Permission\PermissionRepositoryContract;
+use App\Repositories\Role\RoleRepositoryContract;
+use App\Repositories\User\UserContract;
 use Config;
 use Dingo\Api\Exception\ValidationHttpException;
 use Illuminate\Http\Request;
@@ -14,26 +17,59 @@ use Validator;
 
 class AuthController extends Controller
 {
+    /**
+     * @var UserContract
+     */
+    protected $users;
+
+    /**
+     * @var RoleRepositoryContract
+     */
+    protected $roles;
+
+    /**
+     * @var PermissionRepositoryContract
+     */
+    protected $permissions;
+
+    public function __construct(
+        UserContract $users,
+        RoleRepositoryContract $roles,
+        PermissionRepositoryContract $permissions
+    ) {
+        $this->users = $users;
+        $this->roles = $roles;
+        $this->permissions = $permissions;
+    }
+
     public function signup(Request $request)
     {
-        $signupFields = Config::get('boilerplate.signup_fields');
-        $hasToReleaseToken = Config::get('boilerplate.signup_token_release');
-        $userData = $request->only($signupFields);
-        $validator = Validator::make($userData, Config::get('boilerplate.signup_fields_rules'));
+        $credentials = $request->all();
+        $validator = Validator::make($credentials, [
+            'name' => 'required',
+            'email' => 'required|email|unique:users',
+            'password' => 'required|min:6|confirmed',
+            'password_confirmation' => 'required|min:3'
+        ]);
         if ($validator->fails()) {
             throw new ValidationHttpException($validator->errors()->all());
         }
-        User::unguard();
-        $user = User::create($userData);
-        User::reguard();
-        if (!$user->id) {
-            return $this->response->error('could_not_create_user', 500);
-        }
-        if ($hasToReleaseToken) {
-            return $this->login($request);
+        try {
+            $user = $this->users->create($request->except('roles', 'permissions'));
+            if (!$user->id) {
+                return $this->response->error('could_not_create_user', 500);
+            }
+
+            $hasToReleaseToken = Config::get('boilerplate.signup_token_release');
+            if ($hasToReleaseToken) {
+                return $this->login($request);
+            }
+
+            return $this->response->created();
+        } catch (\Exception $e) {
+            return $this->response->error($e->getMessage(), 500);
         }
 
-        return $this->response->created();
     }
 
     public function login(Request $request)
