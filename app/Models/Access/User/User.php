@@ -7,6 +7,9 @@ use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+use Laravel\Passport\HasApiTokens;
+use Illuminate\Notifications\Notifiable;
+
 /**
  * Class User
  * @package App\Models\Access\User
@@ -17,6 +20,8 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     use Authenticatable,
         CanResetPassword,
         SoftDeletes;
+
+    use HasApiTokens, Notifiable;
     /**
      * The database table used by the model.
      *

@@ -140,4 +140,7 @@ class AuthController extends Controller
                 return $this->response->error('could_not_reset_password', 500);
         }
     }
+    public function me(){
+        return JWTAuth::parseToken()->authenticate();
+    }
 }

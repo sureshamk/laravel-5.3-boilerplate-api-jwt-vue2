@@ -16,7 +16,8 @@
     "laravel/socialite": "^2.0",
     "doctrine/dbal": "^2.5",
     "optimus/bruno": "^2.0",
-    "nicolaslopezj/searchable": "^1.9"
+    "nicolaslopezj/searchable": "^1.9",
+    "laravel/passport": "^1.0"
   },
   "require-dev": {
     "fzaninotto/faker": "~1.4",

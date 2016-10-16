@@ -15,7 +15,7 @@
 
                 <!-- Branding Image -->
                 <a class="navbar-brand" href="http://localhost:8000">
-                    My Application
+                    {{appName}}
                 </a>
             </div>
 
@@ -30,7 +30,7 @@
                     <!-- Authentication Links -->
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-                            suresh <span class="caret"></span>
+                            {{user.name}} <span class="caret"></span>
                         </a>
 
                         <ul class="dropdown-menu" role="menu">
@@ -49,23 +49,24 @@
 
 <script>
     export default {
-        ready() {
-            console.log('Component ready.')
+        mounted() {
+           this.getUserData();
         },
         data(){
             return {
-                message: "Hey buddy !! we started"
+                message: "Hey buddy !! we started",
+                appName:"My Application",
+                user:{}
             }
 
         },
-        computed: {
-            demo: function () {
-                return {
-                    displayName: "smaple",
-                    avatar: "smaple",
-                    email: "smaple",
-                    randomCard: "smaple",
-                }
+        methods:{
+            getUserData:function () {
+                Vue.http.post('/api/auth/me').then((response) => {
+              this.user =  response.json().user;
+                }, (response) => {
+                    return false;
+                });
             }
         }
     }

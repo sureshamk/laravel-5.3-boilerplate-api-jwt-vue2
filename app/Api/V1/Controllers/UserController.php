@@ -55,6 +55,9 @@ class UserController extends Controller
      */
     public function index()
     {
+       // $token = JWTAuth::getToken();
+        //dd(JWTAuth::authenticate($token));exit;
+
         return $this->response->paginator($this->users->get(), new UserTransformer);
     }
 

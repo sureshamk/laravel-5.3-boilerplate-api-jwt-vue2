@@ -18,7 +18,7 @@ import Login from "./components/Auth/Login.vue";
 import Register from "./components/Auth/Register.vue";
 import ForgotPassword from "./components/Auth/ForgotPassword.vue";
 import Users from "./components/Users.vue";
-
+import Passport from "./components/passport/Index.vue";
 
 
 var VueResource = require('vue-resource');
@@ -35,6 +35,17 @@ Vue.use(VueRouter);
 Vue.use(VueTables.client);
 Vue.use(VueTables.server);
 
+/**
+ * We'll register a HTTP interceptor to attach the "CSRF" header to each of
+ * the outgoing requests issued by this application. The CSRF middleware
+ * included with Laravel will automatically verify the header's value.
+ */
+
+Vue.http.interceptors.push((request, next) => {
+    request.headers['X-CSRF-TOKEN'] = Laravel.csrfToken;
+    next();
+});
+//Vue.http.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('token');
 /*
  * components
  * */
@@ -59,6 +70,7 @@ const router = new VueRouter({
 
                 // components rendered at /parent/foo: Root -> Parent -> Foo
                 {path: 'users', component: Users},
+                {path: 'passport', component: Passport},
 
                 // components rendered at /parent/bar: Root -> Parent -> Bar
                 {path: 'bar', component: Bar},
@@ -119,11 +131,12 @@ router.beforeEach((to, from, next) => {
         // this route requires auth, check if logged in
         // if not, redirect to login page.
         if (!auth.loggedIn()) {
-            next({
+             next({
                 path: '/login',
                 query: {redirect: to.fullPath}
             })
         } else {
+            Vue.http.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('token');
             next()
         }
     } else {
@@ -131,9 +144,25 @@ router.beforeEach((to, from, next) => {
     }
 });
 
+// Vue.http.interceptors.push((request, next) => {
+//     // continue to next interceptor
+//     next((response) => {
+//         if (response.status == 401) {
+//             auth.logout();
+//         }
+//     });
+//
+// });
 
 // 4. Create and mount the root instance.
 // Make sure to inject the router with the router option to make the
 // whole app router-aware.
 
 new Vue(Vue.util.extend({router}, App)).$mount('#app');
+
+/*
+ * fils delete
+ * reciepent end progress and compress download
+ * simple files -> smallfiles
+ *
+ * */

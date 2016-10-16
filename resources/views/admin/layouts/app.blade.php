@@ -12,8 +12,9 @@
 
     <!-- Styles -->
     <link rel="stylesheet" href="{{ elixir('css/app.css') }}">
-    <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.0.3/css/font-awesome.css">
-
+    <link rel="stylesheet" type="text/css"
+          href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.0.3/css/font-awesome.css">
+    <script>window.Laravel = <?php echo json_encode(['csrfToken' => csrf_token()]); ?></script>
 </head>
 <body>
 <div id="app">

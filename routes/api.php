@@ -22,16 +22,13 @@ $api->version('v1', function ($api) {
     $api->post('auth/recovery', 'App\Api\V1\Controllers\AuthController@recovery');
     $api->post('auth/reset', 'App\Api\V1\Controllers\AuthController@reset');
     // example of protected route
-    $api->get('protected', [
-        'middleware' => ['api.auth'],
-        function () {
-            return \App\User::all();
+    $api->group(['middleware'=>'api.auth'],
+        function ($api)   {
+            $api->post('auth/me', 'App\Api\V1\Controllers\AuthController@me');
+            $api->resource('users', 'App\Api\V1\Controllers\UserController');
+            $api->resource('roles', 'App\Api\V1\Controllers\RoleController');
+            $api->resource('permissions', 'App\Api\V1\Controllers\PermissionController');
+            $api->resource('permissions-groups', 'App\Api\V1\Controllers\PermissionGroupController');
         }
-    ]);
-
-
-    $api->resource('users', 'App\Api\V1\Controllers\UserController');
-    $api->resource('roles', 'App\Api\V1\Controllers\RoleController');
-    $api->resource('permissions', 'App\Api\V1\Controllers\PermissionController');
-    $api->resource('permissions-groups', 'App\Api\V1\Controllers\PermissionGroupController');
+    );
 });

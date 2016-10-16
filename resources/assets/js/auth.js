@@ -50,7 +50,15 @@ export default {
     },
 
     loggedIn() {
-        return !!localStorage.token
+        Vue.http.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('token');
+        // Vue.http.post('/api/auth/me').then((response) => {
+        //     console.log(1);
+        //     return true;
+        // }, (response) => {
+        //     console.log(2);
+        //     return false;
+        // });
+        return localStorage.getItem('token')
     },
 
     onChange () {

@@ -14,6 +14,9 @@
                     <li>
                         <router-link to="/users"><i class="fa fa-desktop"></i> Users </router-link>
                     </li>
+                    <li>
+                        <router-link to="/passport"><i class="fa fa-desktop"></i> Passport </router-link>
+                    </li>
 
                 </ul>
                 <!-- /.sidebar-menu -->
