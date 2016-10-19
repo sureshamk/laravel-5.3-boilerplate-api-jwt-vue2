@@ -102,6 +102,7 @@ return [
             'expire' => 60,
         ],
     ],
-    'table'=>'users',
+    'table' => 'users',
+    'model' => \App\Models\Access\User\User::class
 
 ];

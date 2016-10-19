@@ -7,5 +7,10 @@ module.exports = {
                 query: {compact: false}
             }
         ]
+    },
+    resolve: {
+        alias: {
+            'jquery': require.resolve('jquery'),
+        }
     }
 };
