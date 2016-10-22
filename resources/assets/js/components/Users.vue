@@ -30,7 +30,6 @@
 <script>
     import tabs from '../components/Util/Tabs.vue'
     import tab from '../components/Util/Tab.vue'
-    import React from 'react'
     export default {
         data() {
             return {

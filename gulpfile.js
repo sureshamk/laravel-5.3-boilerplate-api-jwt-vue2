@@ -33,7 +33,8 @@ require('laravel-elixir-vueify');
 elixir(mix => {
     mix.sass('app.scss')
     //mix.less('app.less')
-    //.browserify('app.js')
         .webpack('app.js')
+ //   .browserify('app.js')
+
         .copy('node_modules/bootstrap-sass/assets/fonts/bootstrap/', 'public/fonts/bootstrap');
 });
