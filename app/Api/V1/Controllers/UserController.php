@@ -3,7 +3,6 @@
 namespace App\Api\V1\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests;
 use App\Models\Access\User\User;
 use App\Repositories\Permission\PermissionRepositoryContract;
 use App\Repositories\Role\RoleRepositoryContract;
@@ -17,7 +16,6 @@ use Validator;
 
 class UserController extends Controller
 {
-
     /**
      * @var UserContract
      */
@@ -34,8 +32,8 @@ class UserController extends Controller
     protected $permissions;
 
     /**
-     * @param UserContract $users
-     * @param RoleRepositoryContract $roles
+     * @param UserContract                 $users
+     * @param RoleRepositoryContract       $roles
      * @param PermissionRepositoryContract $permissions
      */
     public function __construct(
@@ -55,10 +53,10 @@ class UserController extends Controller
      */
     public function index()
     {
-       // $token = JWTAuth::getToken();
+        // $token = JWTAuth::getToken();
         //dd(JWTAuth::authenticate($token));exit;
 
-        return $this->response->paginator($this->users->get(), new UserTransformer);
+        return $this->response->paginator($this->users->get(), new UserTransformer());
     }
 
     /**
@@ -68,22 +66,22 @@ class UserController extends Controller
      */
     public function create()
     {
-
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request $request
+     * @param \Illuminate\Http\Request $request
+     *
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
         $credentials = $request->all();
         $validator = Validator::make($credentials, [
-            'name' => 'required',
-            'email' => 'required|email|unique:users',
-            'password' => 'required|min:6'
+            'name'     => 'required',
+            'email'    => 'required|email|unique:users',
+            'password' => 'required|min:6',
         ]);
         if ($validator->fails()) {
             throw new ValidationHttpException($validator->errors()->all());
@@ -91,6 +89,7 @@ class UserController extends Controller
         try {
             $this->users->create($request->except('roles', 'permissions'), $request->get('roles', []),
                 $request->get('permissions', []));
+
             return $this->response->accepted();
         } catch (\Exception $e) {
             return $this->response->error($e->getMessage(), 500);
@@ -100,7 +99,8 @@ class UserController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int $id
+     * @param int $id
+     *
      * @return \Illuminate\Http\Response
      */
     public function show($id)
@@ -110,13 +110,13 @@ class UserController extends Controller
         } catch (ModelNotFoundException $e) {
             return $this->response->errorNotFound();
         }
-
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int $id
+     * @param int $id
+     *
      * @return \Illuminate\Http\Response
      */
     public function edit($id)
@@ -127,15 +127,16 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request $request
-     * @param  int $id
+     * @param \Illuminate\Http\Request $request
+     * @param int                      $id
+     *
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
     {
         $credentials = $request->all();
         $validator = Validator::make($credentials, [
-            'name' => 'required'
+            'name' => 'required',
         ]);
         if ($validator->fails()) {
             throw new ValidationHttpException($validator->errors()->all());
@@ -143,6 +144,7 @@ class UserController extends Controller
         try {
             $this->users->update($id, $request->except('roles', 'permissions'), $request->get('roles', []),
                 $request->get('permissions', []));
+
             return $this->response->accepted();
         } catch (\Exception $e) {
             return $this->response->error($e->getMessage(), 500);
@@ -152,18 +154,16 @@ class UserController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int $id
+     * @param int $id
+     *
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
     {
-
         if (User::destroy($id)) {
             return $this->response->noContent();
         } else {
             return $this->response->error('could_not_delete_user', 500);
         }
-
-
     }
 }

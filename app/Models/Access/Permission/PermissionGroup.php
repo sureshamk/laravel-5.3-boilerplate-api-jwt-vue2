@@ -1,15 +1,14 @@
-<?php namespace App\Models\Access\Permission;
+<?php
+
+namespace App\Models\Access\Permission;
 
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * Class PermissionGroup
- * @package App\Models\Access\Permission
+ * Class PermissionGroup.
  */
 class PermissionGroup extends Model
 {
-
-
     /**
      * The database table used by the model.
      *
@@ -24,9 +23,6 @@ class PermissionGroup extends Model
      */
     protected $guarded = ['id'];
 
-    /**
-     *
-     */
     protected $fillable = ['name', 'sort', 'parent_id'];
 
     public function __construct()
@@ -39,7 +35,7 @@ class PermissionGroup extends Model
      */
     public function children()
     {
-        return $this->hasMany(PermissionGroup::class, 'parent_id', 'id')->orderBy('sort', 'asc');
+        return $this->hasMany(self::class, 'parent_id', 'id')->orderBy('sort', 'asc');
     }
 
     /**

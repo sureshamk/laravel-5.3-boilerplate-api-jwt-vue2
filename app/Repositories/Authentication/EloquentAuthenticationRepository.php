@@ -1,20 +1,21 @@
-<?php namespace App\Repositories\Authentication;
+<?php
 
-use App\Models\Access\User\User;
-use App\Exceptions\GeneralException;
-use Illuminate\Contracts\Auth\Guard;
+namespace App\Repositories\Authentication;
+
 use App\Events\Frontend\Auth\UserLoggedIn;
 use App\Events\Frontend\Auth\UserLoggedOut;
-use App\Repositories\User\UserContract;
-use Laravel\Socialite\Contracts\Factory as Socialite;
+use App\Exceptions\GeneralException;
+use App\Models\Access\User\User;
 use App\Repositories\Role\RoleRepositoryContract;
+use App\Repositories\User\UserContract;
+use Illuminate\Contracts\Auth\Guard;
+use Laravel\Socialite\Contracts\Factory as Socialite;
+
 /**
- * Class Registrar
- * @package App\Services
+ * Class Registrar.
  */
 class EloquentAuthenticationRepository implements AuthenticationContract
 {
-
     /**
      * @var Socialite
      */
@@ -30,11 +31,11 @@ class EloquentAuthenticationRepository implements AuthenticationContract
     private $role;
 
     /**
-     * @param Socialite $socialite
-     * @param Guard $auth
+     * @param Socialite    $socialite
+     * @param Guard        $auth
      * @param UserContract $users
      */
-    public function __construct(Socialite $socialite, Guard $auth, UserContract $users,RoleRepositoryContract $role)
+    public function __construct(Socialite $socialite, Guard $auth, UserContract $users, RoleRepositoryContract $role)
     {
         $this->socialite = $socialite;
         $this->users = $users;
@@ -45,7 +46,8 @@ class EloquentAuthenticationRepository implements AuthenticationContract
     /**
      * Create a new user instance after a valid registration.
      *
-     * @param  array $data
+     * @param array $data
+     *
      * @return User
      */
     public function create(array $data)
@@ -55,31 +57,33 @@ class EloquentAuthenticationRepository implements AuthenticationContract
 
     /**
      * @param $request
-     * @return \Illuminate\Http\RedirectResponse
+     *
      * @throws GeneralException
+     *
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function login($request)
     {
         if ($this->auth->attempt($request->only('email', 'password'), $request->has('remember'))) {
-
             if ($this->auth->user()->status == 0) {
                 $this->auth->logout();
-                throw new GeneralException("Your account is currently deactivated.");
+                throw new GeneralException('Your account is currently deactivated.');
             }
 
             if ($this->auth->user()->status == 2) {
                 $this->auth->logout();
-                throw new GeneralException("Your account is currently banned.");
+                throw new GeneralException('Your account is currently banned.');
             }
 
             if ($this->auth->user()->confirmed == 0) {
                 $user_id = $this->auth->user()->id;
                 $this->auth->logout();
-                throw new GeneralException("Your account is not confirmed. Please click the confirmation link in your e-mail, or " . '<a href="' . route('account.confirm.resend',
-                        $user_id) . '">click here</a>' . " to resend the confirmation e-mail.");
+                throw new GeneralException('Your account is not confirmed. Please click the confirmation link in your e-mail, or '.'<a href="'.route('account.confirm.resend',
+                        $user_id).'">click here</a>'.' to resend the confirmation e-mail.');
             }
 
             event(new UserLoggedIn($this->auth->user()));
+
             return true;
         }
 
@@ -87,7 +91,7 @@ class EloquentAuthenticationRepository implements AuthenticationContract
     }
 
     /**
-     * Log the user out and fire an event
+     * Log the user out and fire an event.
      */
     public function logout()
     {
@@ -96,12 +100,13 @@ class EloquentAuthenticationRepository implements AuthenticationContract
     }
 
     /**
-     * Socialite Functions
+     * Socialite Functions.
      */
 
     /**
      * @param $request
      * @param $provider
+     *
      * @return bool|\Symfony\Component\HttpFoundation\RedirectResponse
      */
     public function loginThirdParty($request, $provider)
@@ -112,16 +117,18 @@ class EloquentAuthenticationRepository implements AuthenticationContract
         $user = $this->users->findByUserNameOrCreate($this->getSocialUser($provider), $provider);
         $this->auth->login($user, true);
         event(new UserLoggedIn($user));
+
         return redirect()->route('home');
     }
 
     /**
      * @param $provider
+     *
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
     public function getAuthorizationFirst($provider)
     {
-        if ($provider == "google") {
+        if ($provider == 'google') {
             /*
              * Only allows google to grab email address
              * Default scopes array also has: 'https://www.googleapis.com/auth/plus.login'
@@ -131,13 +138,16 @@ class EloquentAuthenticationRepository implements AuthenticationContract
                 'https://www.googleapis.com/auth/plus.me',
                 'https://www.googleapis.com/auth/plus.profile.emails.read',
             ];
+
             return $this->socialite->driver($provider)->scopes($scopes)->redirect();
         }
+
         return $this->socialite->driver($provider)->redirect();
     }
 
     /**
      * @param $provider
+     *
      * @return \Laravel\Socialite\Contracts\User
      */
     public function getSocialUser($provider)
@@ -147,6 +157,7 @@ class EloquentAuthenticationRepository implements AuthenticationContract
 
     /**
      * @param $token
+     *
      * @return mixed
      */
     public function confirmAccount($token)
@@ -156,6 +167,7 @@ class EloquentAuthenticationRepository implements AuthenticationContract
 
     /**
      * @param $user_id
+     *
      * @return mixed
      */
     public function resendConfirmationEmail($user_id)
@@ -166,11 +178,11 @@ class EloquentAuthenticationRepository implements AuthenticationContract
     public function createFromFront($data, $provider = false)
     {
         $user = User::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'password' => $provider ? null : $data['password'],
+            'name'              => $data['name'],
+            'email'             => $data['email'],
+            'password'          => $provider ? null : $data['password'],
             'confirmation_code' => md5(uniqid(mt_rand(), true)),
-            'confirmed' => config('access.users.confirm_email') ? 0 : 1,
+            'confirmed'         => config('access.users.confirm_email') ? 0 : 1,
         ]);
         $user->attachRole($this->role->getDefaultUserRole());
 

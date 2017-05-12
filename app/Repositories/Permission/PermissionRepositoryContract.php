@@ -1,15 +1,17 @@
-<?php namespace App\Repositories\Permission;
+<?php
+
+namespace App\Repositories\Permission;
 
 /**
- * Interface PermissionRepositoryContract
- * @package App\Repositories\Permission
+ * Interface PermissionRepositoryContract.
  */
 interface PermissionRepositoryContract
 {
-
     /**
      * @paradim $id
+     *
      * @param bool $withRoles
+     *
      * @return mixed
      */
     public function findOrThrowException($id, $withRoles = false);
@@ -18,6 +20,7 @@ interface PermissionRepositoryContract
      * @param $per_page
      * @param string $order_by
      * @param string $sort
+     *
      * @return mixed
      */
     public function getPermissionsPaginated($per_page, $order_by = 'display_name', $sort = 'asc');
@@ -25,7 +28,8 @@ interface PermissionRepositoryContract
     /**
      * @param string $order_by
      * @param string $sort
-     * @param bool $withRoles
+     * @param bool   $withRoles
+     *
      * @return mixed
      */
     public function getAllPermissions();
@@ -38,6 +42,7 @@ interface PermissionRepositoryContract
     /**
      * @param $input
      * @param $roles
+     *
      * @return mixed
      */
     public function create($input, $roles);
@@ -46,12 +51,14 @@ interface PermissionRepositoryContract
      * @param $id
      * @param $input
      * @param $roles
+     *
      * @return mixed
      */
     public function update($id, $input, $roles);
 
     /**
      * @param $id
+     *
      * @return mixed
      */
     public function destroy($id);

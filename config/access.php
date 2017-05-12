@@ -1,11 +1,11 @@
 <?php
 
-return array(
+return [
 
     /*
      * Role model used by Access to create correct relations. Update the role if it is in a different namespace.
     */
-    'role' => App\Models\Access\Role\Role::class ,
+    'role' => App\Models\Access\Role\Role::class,
 
     /*
      * Roles table used by Access to save roles to the database.
@@ -89,6 +89,6 @@ return array(
         /*
          * Whether a role must contain a permission or can be used standalone as a label
          */
-        'role_must_contain_permission' => true
+        'role_must_contain_permission' => true,
     ],
-);
+];

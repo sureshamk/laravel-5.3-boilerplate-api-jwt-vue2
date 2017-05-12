@@ -1,8 +1,8 @@
 <?php
+
 namespace App\Api\V1\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Models\Access\User\User;
 use App\Repositories\Permission\PermissionRepositoryContract;
 use App\Repositories\Role\RoleRepositoryContract;
 use App\Repositories\User\UserContract;
@@ -46,10 +46,10 @@ class AuthController extends Controller
     {
         $credentials = $request->all();
         $validator = Validator::make($credentials, [
-            'name' => 'required',
-            'email' => 'required|email|unique:users',
-            'password' => 'required|min:6|confirmed',
-            'password_confirmation' => 'required|min:3'
+            'name'                  => 'required',
+            'email'                 => 'required|email|unique:users',
+            'password'              => 'required|min:6|confirmed',
+            'password_confirmation' => 'required|min:3',
         ]);
         if ($validator->fails()) {
             throw new ValidationHttpException($validator->errors()->all());
@@ -69,15 +69,13 @@ class AuthController extends Controller
         } catch (\Exception $e) {
             return $this->response->error($e->getMessage(), 500);
         }
-
     }
 
     public function login(Request $request)
     {
-
         $credentials = $request->only(['email', 'password']);
         $validator = Validator::make($credentials, [
-            'email' => 'required',
+            'email'    => 'required',
             'password' => 'required',
         ]);
         if ($validator->fails()) {
@@ -90,13 +88,14 @@ class AuthController extends Controller
         } catch (JWTException $e) {
             return $this->response->error('could_not_create_token', 500);
         }
+
         return response()->json(compact('token'));
     }
 
     public function recovery(Request $request)
     {
         $validator = Validator::make($request->only('email'), [
-            'email' => 'required'
+            'email' => 'required',
         ]);
         if ($validator->fails()) {
             throw new ValidationHttpException($validator->errors()->all());
@@ -118,8 +117,8 @@ class AuthController extends Controller
             'email', 'password', 'password_confirmation', 'token'
         );
         $validator = Validator::make($credentials, [
-            'token' => 'required',
-            'email' => 'required|email',
+            'token'    => 'required',
+            'email'    => 'required|email',
             'password' => 'required|confirmed|min:6',
         ]);
         if ($validator->fails()) {
@@ -135,12 +134,15 @@ class AuthController extends Controller
                 if (Config::get('boilerplate.reset_token_release')) {
                     return $this->login($request);
                 }
+
                 return $this->response->noContent();
             default:
                 return $this->response->error('could_not_reset_password', 500);
         }
     }
-    public function me(){
+
+    public function me()
+    {
         return JWTAuth::parseToken()->authenticate();
     }
 }

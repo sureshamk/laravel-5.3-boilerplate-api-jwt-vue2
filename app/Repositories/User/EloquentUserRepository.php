@@ -1,4 +1,6 @@
-<?php namespace App\Repositories\User;
+<?php
+
+namespace App\Repositories\User;
 
 use App\Exceptions\Access\User\UserNeedsRolesException;
 use App\Exceptions\GeneralException;
@@ -10,12 +12,10 @@ use Hash;
 use Mail;
 
 /**
- * Class EloquentUserRepository
- * @package App\Repositories\User
+ * Class EloquentUserRepository.
  */
 class EloquentUserRepository implements UserContract
 {
-
     /**
      * @var RoleRepositoryContract
      */
@@ -36,15 +36,16 @@ class EloquentUserRepository implements UserContract
         //  $this->auth = $auth;
     }
 
-
     /**
      * @param string $order_by
      * @param string $sort
+     *
      * @return mixed
      */
     public function get()
     {
         $query = User::query();
+
         return $query = $query->paginate();
     }
 
@@ -52,11 +53,13 @@ class EloquentUserRepository implements UserContract
      * @param $input
      * @param $roles
      * @param $permissions
-     * @return User
+     *
      * @throws GeneralException
      * @throws UserNeedsRolesException
+     *
+     * @return User
      */
-    public function create($input, $roles=[], $permissions=[])
+    public function create($input, $roles = [], $permissions = [])
     {
         $user = $this->createUserStub($input);
 
@@ -66,6 +69,7 @@ class EloquentUserRepository implements UserContract
             if (isset($input['confirmation_email']) && $user->confirmed == 0) {
                 $this->auth->resendConfirmationEmail($user->id);
             }
+
             return $user;
         }
 
@@ -74,17 +78,19 @@ class EloquentUserRepository implements UserContract
 
     /**
      * @param $input
+     *
      * @return mixed
      */
     private function createUserStub($input)
     {
-        $user = new User;
+        $user = new User();
         $user->name = $input['name'];
         $user->email = $input['email'];
         $user->password = bcrypt($input['password']);
         $user->status = isset($input['status']) ? 1 : 0;
         $user->confirmation_code = md5(uniqid(mt_rand(), true));
         $user->confirmed = isset($input['confirmed']) ? 1 : 0;
+
         return $user;
     }
 
@@ -103,14 +109,14 @@ class EloquentUserRepository implements UserContract
     {
         $user = User::where('email', $data->email)->first();
         $providerData = [
-            'avatar' => $data->avatar,
-            'provider' => $provider,
+            'avatar'      => $data->avatar,
+            'provider'    => $provider,
             'provider_id' => $data->id,
         ];
 
         if (!$user) {
             $user = $this->createFromFront([
-                'name' => $data->name,
+                'name'  => $data->name,
                 'email' => $data->email,
             ], true);
         }
@@ -127,11 +133,11 @@ class EloquentUserRepository implements UserContract
     public function createFromFront($data, $provider = false)
     {
         $user = User::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'password' => $provider ? null : $data['password'],
+            'name'              => $data['name'],
+            'email'             => $data['email'],
+            'password'          => $provider ? null : $data['password'],
             'confirmation_code' => md5(uniqid(mt_rand(), true)),
-            'confirmed' => config('access.users.confirm_email') ? 0 : 1,
+            'confirmed'         => config('access.users.confirm_email') ? 0 : 1,
         ]);
         $user->attachRole($this->role->getDefaultUserRole());
 
@@ -146,6 +152,7 @@ class EloquentUserRepository implements UserContract
 
     /**
      * @param $user
+     *
      * @return mixed
      */
     public function sendConfirmationEmail($user)
@@ -156,7 +163,7 @@ class EloquentUserRepository implements UserContract
         }
 
         return Mail::send('emails.confirm', ['token' => $user->confirmation_code], function ($message) use ($user) {
-            $message->to($user->email, $user->name)->subject(app_name() . ': Confirm your account!');
+            $message->to($user->email, $user->name)->subject(app_name().': Confirm your account!');
         });
     }
 
@@ -181,11 +188,11 @@ class EloquentUserRepository implements UserContract
         //Have to first check to see if name and email have to be updated
         $userData = [
             'email' => $providerData->email,
-            'name' => $providerData->name,
+            'name'  => $providerData->name,
         ];
         $dbData = [
             'email' => $user->email,
-            'name' => $user->name,
+            'name'  => $user->name,
         ];
         $differences = array_diff($userData, $dbData);
         if (!empty($differences)) {
@@ -212,7 +219,7 @@ class EloquentUserRepository implements UserContract
             if ($user->email != $input['email']) {
                 //Emails have to be unique
                 if (User::where('email', $input['email'])->first()) {
-                    throw new GeneralException("That e-mail address is already taken.");
+                    throw new GeneralException('That e-mail address is already taken.');
                 }
 
                 $user->email = $input['email'];
@@ -224,8 +231,10 @@ class EloquentUserRepository implements UserContract
 
     /**
      * @param $input
-     * @return mixed
+     *
      * @throws GeneralException
+     *
+     * @return mixed
      */
     public function changePassword($input)
     {
@@ -234,17 +243,20 @@ class EloquentUserRepository implements UserContract
         if (Hash::check($input['old_password'], $user->password)) {
             //Passwords are hashed on the model
             $user->password = $input['password'];
+
             return $user->save();
         }
 
-        throw new GeneralException("That is not your old password.");
+        throw new GeneralException('That is not your old password.');
     }
 
     /**
      * @param $id
      * @param bool $withRoles
-     * @return mixed
+     *
      * @throws GeneralException
+     *
+     * @return mixed
      */
     public function findOrThrowException($id, $withRoles = false)
     {
@@ -263,6 +275,7 @@ class EloquentUserRepository implements UserContract
 
     /**
      * @param $token
+     *
      * @throws GeneralException
      */
     public function confirmAccount($token)
@@ -271,26 +284,29 @@ class EloquentUserRepository implements UserContract
 
         if ($user) {
             if ($user->confirmed == 1) {
-                throw new GeneralException("Your account is already confirmed.");
+                throw new GeneralException('Your account is already confirmed.');
             }
 
             if ($user->confirmation_code == $token) {
                 $user->confirmed = 1;
+
                 return $user->save();
             }
 
-            throw new GeneralException("Your confirmation code does not match.");
+            throw new GeneralException('Your confirmation code does not match.');
         }
 
-        throw new GeneralException("That confirmation code does not exist.");
+        throw new GeneralException('That confirmation code does not exist.');
     }
 
     /**
      * @param $id
      * @param $input
      * @param $roles
-     * @return bool
+     *
      * @throws GeneralException
+     *
+     * @return bool
      */
     public function update($id, $input, $roles, $permissions)
     {
@@ -303,6 +319,7 @@ class EloquentUserRepository implements UserContract
             $user->confirmed = isset($input['confirmed']) ? 1 : 0;
             $user->save();
             $this->updateUserDependencies($roles, $permissions, $user);
+
             return true;
         }
 
@@ -312,6 +329,7 @@ class EloquentUserRepository implements UserContract
     /**
      * @param $input
      * @param $user
+     *
      * @throws GeneralException
      */
     private function checkUserByEmail($input, $user)
@@ -328,8 +346,10 @@ class EloquentUserRepository implements UserContract
     /**
      * @param $id
      * @param $input
-     * @return bool
+     *
      * @throws GeneralException
+     *
+     * @return bool
      */
     public function updatePassword($id, $input)
     {
@@ -346,13 +366,15 @@ class EloquentUserRepository implements UserContract
 
     /**
      * @param $id
-     * @return bool
+     *
      * @throws GeneralException
+     *
+     * @return bool
      */
     public function destroy($id)
     {
         if (auth()->id() == $id) {
-            throw new GeneralException("You can not delete yourself.");
+            throw new GeneralException('You can not delete yourself.');
         }
 
         $user = $this->findOrThrowException($id);
@@ -360,13 +382,15 @@ class EloquentUserRepository implements UserContract
             return true;
         }
 
-        throw new GeneralException("There was a problem deleting this user. Please try again.");
+        throw new GeneralException('There was a problem deleting this user. Please try again.');
     }
 
     /**
      * @param $id
-     * @return boolean|null
+     *
      * @throws GeneralException
+     *
+     * @return bool|null
      */
     public function delete($id)
     {
@@ -385,8 +409,10 @@ class EloquentUserRepository implements UserContract
 
     /**
      * @param $id
-     * @return bool
+     *
      * @throws GeneralException
+     *
+     * @return bool
      */
     public function restore($id)
     {
@@ -396,19 +422,21 @@ class EloquentUserRepository implements UserContract
             return true;
         }
 
-        throw new GeneralException("There was a problem restoring this user. Please try again.");
+        throw new GeneralException('There was a problem restoring this user. Please try again.');
     }
 
     /**
      * @param $id
      * @param $status
-     * @return bool
+     *
      * @throws GeneralException
+     *
+     * @return bool
      */
     public function mark($id, $status)
     {
         if (auth()->id() == $id && ($status == 0 || $status == 2)) {
-            throw new GeneralException("You can not do that to yourself.");
+            throw new GeneralException('You can not do that to yourself.');
         }
 
         $user = $this->findOrThrowException($id);
@@ -418,11 +446,12 @@ class EloquentUserRepository implements UserContract
             return true;
         }
 
-        throw new GeneralException("There was a problem updating this user. Please try again.");
+        throw new GeneralException('There was a problem updating this user. Please try again.');
     }
 
     /**
      * @param $roles
+     *
      * @throws GeneralException
      */
     private function checkUserRolesCount($roles)
