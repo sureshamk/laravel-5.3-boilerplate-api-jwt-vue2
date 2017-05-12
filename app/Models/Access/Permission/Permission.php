@@ -1,15 +1,14 @@
 <?php
 
 namespace App\Models\Access\Permission;
+
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * Class Permission
- * @package App\Models\Access\Permission
+ * Class Permission.
  */
 class Permission extends Model
 {
-
     /**
      * The database table used by the model.
      *
@@ -26,19 +25,17 @@ class Permission extends Model
     protected $casts = [
         //'all' => 'integer',
         'group_id' => 'integer',
-        'system' => 'boolean',
-        'sort' => 'integer',
-        'id' => 'integer'
+        'system'   => 'boolean',
+        'sort'     => 'integer',
+        'id'       => 'integer',
 
     ];
 
-    /**
-     *
-     */
     public function __construct()
     {
         $this->table = config('access.permissions_table');
     }
+
     /**
      * @return mixed
      */

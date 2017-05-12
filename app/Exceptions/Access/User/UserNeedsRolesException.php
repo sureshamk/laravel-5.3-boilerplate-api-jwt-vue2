@@ -1,13 +1,12 @@
 <?php
+
 namespace App\Exceptions\Access\User;
 
 /**
- * Class UserNeedsRolesException
- * @package App\Exceptions\Access
+ * Class UserNeedsRolesException.
  */
 class UserNeedsRolesException extends \Exception
 {
-
     /**
      * @var
      */

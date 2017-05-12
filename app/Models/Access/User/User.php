@@ -1,4 +1,6 @@
-<?php namespace App\Models\Access\User;
+<?php
+
+namespace App\Models\Access\User;
 
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Auth\Passwords\CanResetPassword;
@@ -6,21 +8,17 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-
-use Laravel\Passport\HasApiTokens;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Passport\HasApiTokens;
 
 /**
- * Class User
- * @package App\Models\Access\User
+ * Class User.
  */
 class User extends Model implements AuthenticatableContract, CanResetPasswordContract
 {
-
     use Authenticatable,
         CanResetPassword,
         SoftDeletes;
-
     use HasApiTokens, Notifiable;
     /**
      * The database table used by the model.
@@ -41,20 +39,19 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
      *
      * @var array
      */
-    protected $hidden = ['password', 'remember_token','confirmation_code'];
+    protected $hidden = ['password', 'remember_token', 'confirmation_code'];
 
     /**
-     * For soft deletes
+     * For soft deletes.
      *
      * @var array
      */
     protected $dates = ['deleted_at'];
     protected $casts = [
-        'status' => 'integer',
+        'status'    => 'integer',
         'confirmed' => 'boolean',
-        'id' => 'integer'
+        'id'        => 'integer',
     ];
-
 
     /**
      * @return mixed
@@ -66,9 +63,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     /**
      * Checks to see if user has array of roles
-     * All must return true
+     * All must return true.
+     *
      * @param $roles
      * @param $needsAll
+     *
      * @return bool
      */
     public function hasRoles($roles, $needsAll)
@@ -120,11 +119,13 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
                 return true;
             }
         }
+
         return false;
     }
 
     /**
      * @param $nameOrId
+     *
      * @return bool
      */
     public function hasPermission($nameOrId)
@@ -187,6 +188,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     /**
      * @param $permissions
      * @param bool $needsAll
+     *
      * @return bool
      */
     public function hasPermissions($permissions, $needsAll = false)
@@ -195,9 +197,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     }
 
     /**
-     * Check an array of permissions and whether or not all are required to continue
+     * Check an array of permissions and whether or not all are required to continue.
+     *
      * @param $permissions
      * @param $needsAll
+     *
      * @return bool
      */
     public function canMultiple($permissions, $needsAll = false)
@@ -237,11 +241,9 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return $this->belongsToMany(config('access.role'), config('access.assigned_roles_table'), 'user_id', 'role_id');
     }
 
-
-
     /**
      * Many-to-Many relations with Permission.
-     * ONLY GETS PERMISSIONS ARE NOT ASSOCIATED WITH A ROLE
+     * ONLY GETS PERMISSIONS ARE NOT ASSOCIATED WITH A ROLE.
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */

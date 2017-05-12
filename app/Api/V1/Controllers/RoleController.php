@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Api\V1\Controllers;
 
 use App\Exceptions\GeneralException;
@@ -10,12 +11,10 @@ use App\Transformers\RoleTransformer;
 use Illuminate\Http\Request;
 
 /**
- * Class RoleController
- * @package App\Http\Controllers\Access
+ * Class RoleController.
  */
 class RoleController extends Controller
 {
-
     /**
      * @var RoleRepositoryContract
      */
@@ -27,7 +26,7 @@ class RoleController extends Controller
     protected $permissions;
 
     /**
-     * @param RoleRepositoryContract $roles
+     * @param RoleRepositoryContract       $roles
      * @param PermissionRepositoryContract $permissions
      */
     public function __construct(RoleRepositoryContract $roles, PermissionRepositoryContract $permissions)
@@ -41,7 +40,7 @@ class RoleController extends Controller
      */
     public function index(Request $request)
     {
-        return $this->response->paginator($this->roles->getAllRoles(), new RoleTransformer);
+        return $this->response->paginator($this->roles->getAllRoles(), new RoleTransformer());
     }
 
     public function show($id)
@@ -53,9 +52,9 @@ class RoleController extends Controller
         }
     }
 
-
     /**
      * @param Request $request
+     *
      * @return mixed
      */
     public function store(Request $request)
@@ -69,18 +68,16 @@ class RoleController extends Controller
         } else {
             return $this->response->error('Could not store the role', 500);
         }
-
     }
-
 
     public function edit($id, Request $request)
     {
-
     }
 
     /**
      * @param $id
      * @param Request $request
+     *
      * @return mixed
      */
     public function update($id, Request $request)
@@ -99,6 +96,7 @@ class RoleController extends Controller
     /**
      * @param $id
      * @param Request $request
+     *
      * @return mixed
      */
     public function destroy($id, Request $request)

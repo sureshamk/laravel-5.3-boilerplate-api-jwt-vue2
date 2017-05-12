@@ -23,7 +23,7 @@ $api->version('v1', function ($api) {
     $api->post('auth/reset', 'App\Api\V1\Controllers\AuthController@reset');
     // example of protected route
     $api->group(['middleware'=>'api.auth'],
-        function ($api)   {
+        function ($api) {
             $api->post('auth/me', 'App\Api\V1\Controllers\AuthController@me');
             $api->resource('users', 'App\Api\V1\Controllers\UserController');
             $api->resource('roles', 'App\Api\V1\Controllers\RoleController');

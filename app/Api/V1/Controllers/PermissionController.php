@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Api\V1\Controllers;
 
 use App\Exceptions\GeneralException;
@@ -12,12 +13,10 @@ use Dingo\Api\Contract\Http\Request;
 use Exception;
 
 /**
- * Class PermissionController
- * @package App\Http\Controllers\Access
+ * Class PermissionController.
  */
 class PermissionController extends Controller
 {
-
     /**
      * @var RoleRepositoryContract
      */
@@ -34,8 +33,8 @@ class PermissionController extends Controller
     protected $groups;
 
     /**
-     * @param RoleRepositoryContract $roles
-     * @param PermissionRepositoryContract $permissions
+     * @param RoleRepositoryContract            $roles
+     * @param PermissionRepositoryContract      $permissions
      * @param PermissionGroupRepositoryContract $groups
      */
     public function __construct(
@@ -53,7 +52,7 @@ class PermissionController extends Controller
      */
     public function index()
     {
-        return $this->response->paginator($this->permissions->getAllPermissions(), new PermissionTransformer);
+        return $this->response->paginator($this->permissions->getAllPermissions(), new PermissionTransformer());
     }
 
     public function show($id)
@@ -61,77 +60,80 @@ class PermissionController extends Controller
         return $permission = $this->permissions->findOrThrowException($id, true);
     }
 
-
     /**
      * @param Request $request
+     *
      * @return mixed
      */
     public function create(Request $request)
     {
-
     }
 
     /**
      * @param Request $request
+     *
      * @return mixed
      */
     public function store(Request $request)
     {
         try {
             $rules = [
-                'name' => 'required|unique:permissions',
+                'name'         => 'required|unique:permissions',
                 'display_name' => 'required',
             ];
             $this->validateApiRequest($request->all(), $rules);
             $this->permissions->create($request->except('roles'), $request->get('roles', []));
+
             return $this->response->noContent();
         } catch (GeneralException $e) {
             return $this->response->error('Could not store the permission', 500);
         }
-
     }
 
     /**
      * @param $id
      * @param Request $request
+     *
      * @return mixed
      */
     public function edit($id, Request $request)
     {
-
     }
 
     /**
      * @param $id
      * @param Request $request
+     *
      * @return mixed
      */
     public function update($id, Request $request)
     {
         try {
             $rules = [
-                'name' => 'required',
-                'display_name' => 'required'
+                'name'         => 'required',
+                'display_name' => 'required',
             ];
             $this->validateApiRequest($request->all(), $rules);
 
             $this->permissions->update($id, $request->except('roles'), $request->only('roles'));
+
             return $this->response->noContent();
         } catch (GeneralException $e) {
             return $this->response->error('Could not update the permission', 500);
         }
-
     }
 
     /**
      * @param $id
      * @param Request $request
+     *
      * @return mixed
      */
     public function destroy($id, Request $request)
     {
         try {
             $this->permissions->destroy($id);
+
             return $this->response->noContent();
         } catch (Exception $e) {
             return $this->response->error('Could not delete the permission', 500);

@@ -5,10 +5,8 @@ use Illuminate\Support\Facades\DB;
 
 class AccessTableSeeder extends Seeder
 {
-
     public function run()
     {
-
         if (env('DB_CONNECTION') == 'mysql') {
             DB::statement('SET FOREIGN_KEY_CHECKS=0;');
         }

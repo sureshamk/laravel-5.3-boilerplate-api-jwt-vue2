@@ -1,15 +1,14 @@
-<?php namespace App\Models\Access\Permission;
+<?php
+
+namespace App\Models\Access\Permission;
 
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * Class PermissionDependency
- * @package App\Models\Access\Permission
+ * Class PermissionDependency.
  */
 class PermissionDependency extends Model
 {
-
-
     /**
      * The database table used by the model.
      *
@@ -26,16 +25,14 @@ class PermissionDependency extends Model
     protected $casts = [
         'permission_id' => 'integer',
         'dependency_id' => 'integer',
-        'id' => 'integer'
+        'id'            => 'integer',
     ];
 
-    /**
-     *
-     */
     public function __construct()
     {
         $this->table = config('access.permission_dependencies_table');
     }
+
     /**
      * @return mixed
      */

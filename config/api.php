@@ -1,7 +1,6 @@
 <?php
 
 
-
 return [
 
     /*
@@ -139,11 +138,11 @@ return [
     */
 
     'errorFormat' => [
-        'message' => ':message',
-        'errors' => ':errors',
-        'code' => ':code',
+        'message'     => ':message',
+        'errors'      => ':errors',
+        'code'        => ':code',
         'status_code' => ':status_code',
-        'debug' => ':debug',
+        'debug'       => ':debug',
     ],
 
     /*
@@ -170,7 +169,7 @@ return [
     */
 
     'auth' => [
-        'jwt' => 'Dingo\Api\Auth\Provider\JWT'
+        'jwt' => 'Dingo\Api\Auth\Provider\JWT',
     ],
 
     /*

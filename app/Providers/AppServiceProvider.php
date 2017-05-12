@@ -33,8 +33,6 @@ class AppServiceProvider extends ServiceProvider
             \App\Repositories\User\EloquentUserRepository::class
         );
 
-
-
         $this->app->bind(
             \App\Repositories\Role\RoleRepositoryContract::class,
             \App\Repositories\Role\EloquentRoleRepository::class

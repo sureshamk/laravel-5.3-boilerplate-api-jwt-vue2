@@ -1,17 +1,16 @@
-<?php namespace App\Models\Access\Role;
+<?php
+
+namespace App\Models\Access\Role;
 
 use Illuminate\Database\Eloquent\Model;
 use Nicolaslopezj\Searchable\SearchableTrait;
 
 /**
- * Class Role
- * @package App\Models\Access\Role
+ * Class Role.
  */
 class Role extends Model
 {
-
     use SearchableTrait;
-
 
     /**
      * The database table used by the model.
@@ -27,21 +26,18 @@ class Role extends Model
      */
     protected $guarded = ['id'];
     protected $casts = [
-        'all' => 'boolean',
+        'all'  => 'boolean',
         'sort' => 'integer',
-        'id' => 'integer',
+        'id'   => 'integer',
     ];
 
     protected $searchable = [
         'columns' => [
-            'name' => 10
-        ]
+            'name' => 10,
+        ],
 
     ];
 
-    /**
-     *
-     */
     public function __construct()
     {
         $this->table = config('access.roles_table');
@@ -64,6 +60,7 @@ class Role extends Model
             'permission_id')
             ->orderBy('display_name', 'asc');
     }
+
     /**
      * Save the inputted permissions.
      *
@@ -115,7 +112,7 @@ class Role extends Model
     }
 
     /**
-     * Detach multiple permissions from current role
+     * Detach multiple permissions from current role.
      *
      * @param mixed $permissions
      *
